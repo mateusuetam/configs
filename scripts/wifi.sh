@@ -10,9 +10,9 @@ nmcli radio wifi | grep -q "enabled"
 }
 toggle_power() {
 if is_on; then
-nmcli radio wifi off && notify-send "Wi-Fi Desligado"
+nmcli radio wifi off
 else
-nmcli radio wifi on && notify-send "Wi-Fi Ligado"
+nmcli radio wifi on
 sleep 2
 fi
 }
@@ -43,11 +43,11 @@ confirm=$(printf "󰄬 Confirmar conexão\n󰜺 Cancelar" | menu)
 [ "$confirm" != "󰄬 Confirmar conexão" ] && return
 security=$(nmcli -t -f SSID,SECURITY dev wifi list | grep "^$ssid:" | cut -d: -f2)
 if [ -z "$security" ]; then
-nmcli dev wifi connect "$ssid" && notify-send "Conectado a $ssid"
+nmcli dev wifi connect "$ssid" && notify-send "Wifi" "Conectado a $ssid"
 else
 password=$(rofi -dmenu -theme "$HOME/Documentos/repos/configs/rofi/input.rasi" -p "Senha para $ssid" -password)
 [ -z "$password" ] && return
-nmcli dev wifi connect "$ssid" password "$password" && notify-send "Conectado a $ssid"
+nmcli dev wifi connect "$ssid" password "$password" && notify-send "Wifi" "Conectado a $ssid"
 fi
 }
 scan_menu() {
@@ -55,7 +55,7 @@ while true; do
 networks="$(scan_networks)"
 choice=$(printf "󰑐 Atualizar scan\n󰜺 Voltar\n%s\n%s" "󰤥 ───── Redes encontradas ───── 󰤥" "$networks" | menu)
 case "$choice" in
-"󰑐 Atualizar scan") notify-send "Atualizando scan..." && continue ;;
+"󰑐 Atualizar scan") notify-send "Wifi" "Atualizando scan..." && continue ;;
 "󰜺 Voltar" | "") return ;;
 *)
 ssid=$(echo "$choice" | sed -E 's/^.*󰤨 |^.*󰤥 |^.*󰤢 |^.*󰤟 //' | sed 's/ [0-9]\+%.*//')
@@ -65,14 +65,14 @@ esac
 done
 }
 forget_network() {
-nmcli connection delete "$1" && notify-send "Rede $1 removida"
+nmcli connection delete "$1" && notify-send "Wifi" "Rede $1 removida"
 }
 saved_menu() {
 ssid="$1"
 choice=$(printf "󱛃 Conectar\n󱛂 Desconectar\n󱛅 Esquecer\n󰜺 Voltar" | menu)
 case "$choice" in
-"󱛃 Conectar") nmcli connection up "$ssid" && notify-send "Conectado a $ssid" ;;
-"󱛂 Desconectar") nmcli connect down "$ssid" && notify-send "Desconectado de $ssid" ;;
+"󱛃 Conectar") nmcli connection up "$ssid" && notify-send "Wifi" "Conectado a $ssid" ;;
+"󱛂 Desconectar") nmcli connect down "$ssid" && notify-send "Wifi" "Desconectado de $ssid" ;;
 "󱛅 Esquecer") forget_network "$ssid" ;;
 esac
 }
@@ -101,7 +101,7 @@ $saved"
 choice=$(printf "%s" "$options" | menu)
 case "$choice" in
 "󰤭 Desligar Wi-Fi") toggle_power ;;
-"󰤨 Escanear redes") notify-send "Realizando scan..." && scan_menu ;;
+"󰤨 Escanear redes") notify-send "Wifi" "Realizando scan..." && scan_menu ;;
 "󰜺 Sair" | "") exit ;;
 "$separator") continue ;;
 󰤨\ Conectado:*)

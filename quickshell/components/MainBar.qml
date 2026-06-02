@@ -28,6 +28,14 @@ PanelWindow {
         anchors.fill: parent
         color: "#282828"
 
+        Rectangle {
+            anchors.bottom: parent.bottom
+            anchors.left: parent.left
+            anchors.right: parent.right
+            height: 1
+            color: "#3c3836"
+        }
+
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 6

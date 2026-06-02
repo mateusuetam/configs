@@ -16,7 +16,7 @@ Item {
 
     Process {
         id: clipWipe
-        command: ["sh", "-c", "cliphist wipe && notify-send 'Clipboard limpo'"]
+        command: ["sh", "-c", "cliphist wipe && notify-send Clipboard 'Histórico apagado!'"]
     }
 
     MouseArea {

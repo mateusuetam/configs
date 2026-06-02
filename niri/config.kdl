@@ -118,7 +118,6 @@ Ctrl+Alt+Delete{quit;}
 }
 screenshot-path "~/Imagens/Print de %Y-%m-%d %H-%M-%S.jpg"
 spawn-at-startup "quickshell"
-spawn-at-startup "mako"
 spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 spawn-at-startup "swayidle" "-w" "timeout" "610" "niri msg action power-off-monitors" "timeout" "600" "swaylock -f" "before-sleep" "swaylock -f"

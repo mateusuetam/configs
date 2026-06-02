@@ -70,7 +70,6 @@ bindsym Mod4+b exec firefox
 bindsym Mod4+p exec rofi -show drun -theme $HOME/Documentos/repos/configs/rofi/launcher.rasi
 bindsym Super_R exec swaylock -f
 bindsym Print exec grim -g "$(slurp)" - | tee ~/Imagens/$(date +%Y-%m-%d_%H-%M-%S).png | wl-copy && notify-send "Print!"
-exec mako
 exec wl-paste --watch cliphist store
 exec swayidle -w timeout 600 'swaylock -f' timeout 610 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep 'swaylock -f'
 bar {

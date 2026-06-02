@@ -11,9 +11,12 @@ ShellRoot {
     }
 
     MainBar {
+        id: mainBarWindow
         screen: Quickshell.screens[0]
     }
 
-    // NotificationCenter {}
+    NotificationPopup {
+        targetWindow: mainBarWindow
+    }
     // LockScreen { visible: algumSinalDeBloqueio }
 }

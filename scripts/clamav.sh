@@ -15,7 +15,7 @@ mkdir -p "$QUARANTENA"
 sudo freshclam || echo -e "${VERMELHO}Falha ao executar o comando 'freshclam'.${NC}"
 echo -e "${VERDE}Iniciando scan...${NC}"
 sudo clamscan --exclude='/sys/kernel/debug/dri/' --max-filesize=2G --max-scansize=2G -r --move="$QUARANTENA/" "$alvo"
-notify-send -u normal 'Scan concluído.'
+notify-send "Clamav" "Scan concluído!"
 read -p "Pressione Enter para continuar..." dummy
 }
 while true;

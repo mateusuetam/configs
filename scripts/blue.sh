@@ -143,7 +143,7 @@ paired_list=$(get_clean_list "bt devices Paired")
 options=$(printf "󰂲 Desligar Bluetooth\n󰂰 Iniciar Busca de Dispositivos\n󰜺 Sair\n%s\n%s" "$separator_paired" "$paired_list")
 choice=$(echo "$options" | grep -vE "^$|^[[:space:]]*$" | menu "Menu Principal")
 case "$choice" in
-"󰂲 Desligar Bluetooth") toggle_power && notify-send "Bluetooth Desligado" ;;
+"󰂲 Desligar Bluetooth") toggle_power ;;
 "󰂰 Iniciar Busca de Dispositivos") scan_menu ;;
 "󰜺 Sair" | "") exit ;;
 "$separator_paired") continue ;;

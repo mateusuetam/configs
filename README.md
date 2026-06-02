@@ -5,15 +5,13 @@ Meus arquivos de customização e scripts pensados para um fluxo de trabalho em 
 
 • Window Manager: Niri
 
+• Shell: Quickshell
+
 • Terminal: Alacritty
 
 • Editor de texto: Neovim
 
 • App launcher: Rofi
-
-• Shell: Quickshell
-
-• Notificações: Mako
 
 • Lockscreen: Swaylock
 
