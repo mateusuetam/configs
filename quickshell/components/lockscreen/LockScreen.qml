@@ -8,6 +8,10 @@ import "../theme"
 Item {
     id: lockRoot
 
+    readonly property color lockBackgroundColor: "#282828"
+    readonly property int screenMargins: 60
+    readonly property int elementSpacing: 20
+
     property string currentText: ""
     property bool unlockInProgress: false
     property bool showFailure: false
@@ -50,12 +54,12 @@ Item {
 
         WlSessionLockSurface {
             id: lockSurface
-            color: Theme.backgroundColor
+            color: lockRoot.lockBackgroundColor
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 60
-                spacing: 20
+                anchors.margins: lockRoot.screenMargins
+                spacing: lockRoot.elementSpacing
 
                 LockHeader {}
 

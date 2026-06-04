@@ -6,29 +6,36 @@ import "../components/theme"
 PopupWindow {
     id: notifyPopup
 
+    readonly property color popupBackgroundColor: "#282828"
+    readonly property color contentTextColor: "#ebdbb2"
+    readonly property color criticalUrgencyColor: "#fb4934"
+    readonly property color lowUrgencyColor: "#8ec07c"
+    readonly property color normalUrgencyColor: "#3c3836"
+
     readonly property color notifyColor: {
         if (!currentNotify) {
-            return Theme.borderColor;
+            return notifyPopup.normalUrgencyColor;
         }
 
         switch (currentNotify.urgency) {
         case NotificationUrgency.Critical:
-            return Theme.warmColor;
+            return notifyPopup.criticalUrgencyColor;
         case NotificationUrgency.Low:
-            return Theme.activeColor;
+            return notifyPopup.lowUrgencyColor;
         case NotificationUrgency.Normal:
         default:
-            return Theme.borderColor;
+            return notifyPopup.normalUrgencyColor;
         }
     }
+
     property var notifyQueue: []
     property var currentNotify: null
     required property QtObject targetWindow
 
     Binding {
         target: notifyPopup.targetWindow
-        property: "borderColor"
-        value: notifyPopup.visible ? notifyPopup.notifyColor : Theme.borderColor
+        property: "barBorderColor"
+        value: notifyPopup.visible ? notifyPopup.notifyColor : notifyPopup.normalUrgencyColor
     }
 
     anchor.window: targetWindow
@@ -130,7 +137,7 @@ PopupWindow {
         height: parent.height
         y: -height
 
-        color: Theme.backgroundColor
+        color: notifyPopup.popupBackgroundColor
         radius: 0
 
         Rectangle {
@@ -175,7 +182,7 @@ PopupWindow {
             Text {
                 id: headerText
                 width: parent.width
-                color: Theme.textColor
+                color: notifyPopup.contentTextColor
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSize
                 font.bold: true
@@ -193,7 +200,7 @@ PopupWindow {
             Text {
                 id: bodyText
                 width: parent.width
-                color: Theme.textColor
+                color: notifyPopup.contentTextColor
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.fontSize
                 wrapMode: Text.Wrap

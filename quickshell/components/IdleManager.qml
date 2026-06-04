@@ -5,12 +5,16 @@ import Quickshell.Io
 Item {
     id: idleManager
 
+    readonly property int lockTimeout: 300
+    readonly property int screenTimeout: 600
+    readonly property var monitorOffCommand: ["niri", "msg", "action", "power-off-monitors"]
+
     property bool enabledIdle: true
     property var lockTarget: null
 
     Process {
         id: screenProcess
-        command: ["niri", "msg", "action", "power-off-monitors"]
+        command: idleManager.monitorOffCommand
     }
 
     function lockScreen() {
@@ -25,7 +29,7 @@ Item {
 
     IdleMonitor {
         id: lockMonitor
-        timeout: 300
+        timeout: idleManager.lockTimeout
         enabled: idleManager.enabledIdle
         respectInhibitors: true
 
@@ -37,7 +41,7 @@ Item {
 
     IdleMonitor {
         id: screenMonitor
-        timeout: 600
+        timeout: idleManager.screenTimeout
         enabled: idleManager.enabledIdle
         respectInhibitors: true
 

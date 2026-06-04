@@ -3,6 +3,15 @@ import QtQuick.Layouts
 import "../theme"
 
 ColumnLayout {
+    id: lockClock
+
+    readonly property color clockColor: "#689d6a"
+    readonly property color labelColor: "#504945"
+    readonly property int clockFontSize: 110
+    readonly property int labelFontSize: 12
+    readonly property int labelLetterSpacing: 4
+    readonly property string labelText: "SOBREPOSIÇÃO DE HORA DO SISTEMA"
+
     Layout.alignment: Qt.AlignHCenter
     Layout.topMargin: 40
     spacing: 0
@@ -16,9 +25,9 @@ ColumnLayout {
 
         renderType: Text.NativeRendering
         font.family: Theme.fontFamily
-        font.pixelSize: 110
+        font.pixelSize: lockClock.clockFontSize
         font.bold: true
-        color: Theme.activeColor
+        color: lockClock.clockColor
 
         Timer {
             running: true
@@ -36,10 +45,10 @@ ColumnLayout {
 
     Text {
         Layout.alignment: Qt.AlignHCenter
-        text: "SOBREPOSIÇÃO DE HORA DO SISTEMA"
+        text: lockClock.labelText
         font.family: Theme.fontFamily
-        font.pixelSize: 12
-        font.letterSpacing: 4
-        color: Theme.hoverColor
+        font.pixelSize: lockClock.labelFontSize
+        font.letterSpacing: lockClock.labelLetterSpacing
+        color: lockClock.labelColor
     }
 }

@@ -6,6 +6,11 @@ import "../components/theme"
 Item {
     id: networkModule
 
+    readonly property color disabledColor: "#fb4934"
+    readonly property color disconnectedColor: "#928374"
+    readonly property color connectedColor: "#458588"
+    readonly property color labelColor: "#ebdbb2"
+
     readonly property bool isWifiOn: Networking.wifiEnabled
 
     implicitWidth: networkText.implicitWidth
@@ -58,23 +63,25 @@ Item {
 
     Text {
         id: networkText
+
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize
         anchors.verticalCenter: parent.verticalCenter
         textFormat: Text.RichText
+
         color: {
             if (!networkModule.isWifiOn) {
-                return Theme.warmColor;
+                return networkModule.disabledColor;
             }
             var dev = networkModule.getActiveDevice();
             if (!dev) {
-                return Theme.unfocusedColor;
+                return networkModule.disconnectedColor;
             }
-            return Theme.connectedColor;
+            return networkModule.connectedColor;
         }
 
         text: {
-            var prefix = `<span style="color: ${Theme.textColor};">nw:</span>`;
+            var prefix = `<span style="color: ${networkModule.labelColor};">nw:</span>`;
             if (!networkModule.isWifiOn) {
                 return `${prefix} off`;
             }

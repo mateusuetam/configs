@@ -7,6 +7,9 @@ import "../components/contextmenu"
 Item {
     id: trayModule
 
+    readonly property int iconSize: 20
+    readonly property int itemSpacing: 8
+
     property var parentWindow: null
 
     implicitWidth: trayLayout.implicitWidth
@@ -27,7 +30,7 @@ Item {
 
     Row {
         id: trayLayout
-        spacing: 8
+        spacing: trayModule.itemSpacing
         anchors.verticalCenter: parent.verticalCenter
 
         Repeater {
@@ -35,8 +38,8 @@ Item {
 
             delegate: Item {
                 id: trayItemDelegate
-                width: 20
-                height: 20
+                width: trayModule.iconSize
+                height: trayModule.iconSize
                 anchors.verticalCenter: parent.verticalCenter
 
                 required property var modelData
@@ -47,8 +50,8 @@ Item {
                     source: trayItemDelegate.trayItem && trayItemDelegate.trayItem.icon ? trayItemDelegate.trayItem.icon : ""
                     fillMode: Image.PreserveAspectFit
                     asynchronous: true
-                    sourceSize.width: 20
-                    sourceSize.height: 20
+                    sourceSize.width: trayModule.iconSize
+                    sourceSize.height: trayModule.iconSize
                 }
 
                 MouseArea {

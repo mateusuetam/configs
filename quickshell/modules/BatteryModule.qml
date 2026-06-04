@@ -5,6 +5,12 @@ import "../components/theme"
 Text {
     id: batteryModule
 
+    readonly property color errorColor: "#cc241d"
+    readonly property color chargingColor: "#b8bb26"
+    readonly property color criticalColor: "#fb4934"
+    readonly property color lowColor: "#fe8019"
+    readonly property color normalColor: "#fabd2f"
+
     readonly property var dev: UPower.displayDevice
     readonly property int realPercentage: (dev && dev.ready) ? Math.round(dev.percentage * 100) : 0
     readonly property bool isFull: dev ? (dev.state === UPowerDeviceState.FullyCharged || (realPercentage >= 95 && dev.changeRate === 0)) : false
@@ -15,14 +21,14 @@ Text {
 
     color: {
         if (!dev || !dev.ready)
-            return Theme.brightColor;
+            return batteryModule.errorColor;
         if (!UPower.onBattery)
-            return Theme.positiveColor;
+            return batteryModule.chargingColor;
         if (realPercentage <= 20)
-            return Theme.warmColor;
+            return batteryModule.criticalColor;
         if (realPercentage <= 30)
-            return Theme.flashyColor;
-        return Theme.brightColor;
+            return batteryModule.lowColor;
+        return batteryModule.normalColor;
     }
 
     text: {

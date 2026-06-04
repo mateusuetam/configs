@@ -3,20 +3,26 @@ import QtQuick.Layouts
 import "../theme"
 
 ColumnLayout {
+    id: lockHeader
+
+    readonly property string headerText: "MU-TH-UR 6000 // INTERFACE DE SESSÃO SEGURA"
+    readonly property color accentColor: "#504945"
+    readonly property int labelFontSize: 14
+
     Layout.fillWidth: true
     spacing: 5
 
     Text {
-        text: "MU-TH-UR 6000 // INTERFACE DE SESSÃO SEGURA"
+        text: lockHeader.headerText
         font.family: Theme.fontFamily
-        font.pixelSize: Theme.fontSize
+        font.pixelSize: lockHeader.labelFontSize
         font.bold: true
-        color: Theme.hoverColor
+        color: lockHeader.accentColor
     }
 
     Rectangle {
         Layout.fillWidth: true
         implicitHeight: 1
-        color: Theme.hoverColor
+        color: lockHeader.accentColor
     }
 }

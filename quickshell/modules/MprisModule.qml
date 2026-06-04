@@ -5,6 +5,9 @@ import "../components/theme"
 Item {
     id: mprisModule
 
+    readonly property color playingColor: "#689d6a"
+    readonly property color pausedColor: "#458588"
+
     readonly property var activePlayer: {
         const list = Mpris.players.values;
 
@@ -56,12 +59,13 @@ Item {
         width: parent.implicitWidth
         elide: Text.ElideRight
         anchors.verticalCenter: parent.verticalCenter
+
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize
 
         color: {
             const player = mprisModule.activePlayer;
-            return player?.isPlaying ? Theme.positiveColor : Theme.activeColor;
+            return player?.isPlaying ? mprisModule.playingColor : mprisModule.pausedColor;
         }
 
         text: {

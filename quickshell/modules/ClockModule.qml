@@ -5,9 +5,12 @@ import "../components/theme"
 Text {
     id: clockModule
 
+    readonly property color labelColor: "#ebdbb2"
+
     font.family: Theme.fontFamily
     font.pixelSize: Theme.fontSize
-    color: Theme.textColor
+
+    color: clockModule.labelColor
     anchors.verticalCenter: parent.verticalCenter
 
     SystemClock {

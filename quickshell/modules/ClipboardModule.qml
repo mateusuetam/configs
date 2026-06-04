@@ -5,6 +5,8 @@ import "../components/theme"
 Item {
     id: clipboardModule
 
+    readonly property color utilityColor: "#b16286"
+
     implicitWidth: clipText.implicitWidth
     implicitHeight: 30
 
@@ -36,7 +38,8 @@ Item {
         id: clipText
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize
-        color: Theme.uniqueColor
+
+        color: clipboardModule.utilityColor
         anchors.verticalCenter: parent.verticalCenter
         text: "clipboard"
     }

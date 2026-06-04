@@ -6,6 +6,11 @@ import "../components/theme"
 Item {
     id: bluetoothModule
 
+    readonly property color disabledColor: "#fb4934"
+    readonly property color disconnectedColor: "#928374"
+    readonly property color connectedColor: "#458588"
+    readonly property color labelColor: "#ebdbb2"
+
     readonly property bool isBluetoothOn: Bluetooth.defaultAdapter ? Bluetooth.defaultAdapter.enabled : false
 
     implicitWidth: bluetoothText.implicitWidth
@@ -48,6 +53,7 @@ Item {
 
     Text {
         id: bluetoothText
+
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize
         anchors.verticalCenter: parent.verticalCenter
@@ -56,19 +62,19 @@ Item {
 
         color: {
             if (!bluetoothModule.isBluetoothOn) {
-                return Theme.warmColor;
+                return bluetoothModule.disabledColor;
             }
 
             var dev = bluetoothModule.getConnectedDevice();
             if (!dev) {
-                return Theme.unfocusedColor;
+                return bluetoothModule.disconnectedColor;
             }
 
-            return Theme.connectedColor;
+            return bluetoothModule.connectedColor;
         }
 
         text: {
-            var prefix = `<span style="color: ${Theme.textColor};">bt:</span>`;
+            var prefix = `<span style="color: ${bluetoothModule.labelColor};">bt:</span>`;
 
             if (!bluetoothModule.isBluetoothOn) {
                 return `${prefix} off`;

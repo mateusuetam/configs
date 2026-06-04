@@ -5,7 +5,8 @@ import Quickshell.Wayland
 PanelWindow {
     id: wallpaperWindow
 
-    readonly property url wallpaperPath: "file://" + Quickshell.env("HOME") + "/Imagens/afina.png"
+    readonly property url sourcePath: "file:/home/mateus/Imagens/afina.png"
+    readonly property int imageFillMode: Image.Center
 
     WlrLayershell.layer: WlrLayer.Background
     WlrLayershell.namespace: "wallpaper"
@@ -22,8 +23,8 @@ PanelWindow {
 
     Image {
         anchors.fill: parent
-        source: wallpaperWindow.wallpaperPath
-        fillMode: Image.PreserveAspectCrop
+        source: wallpaperWindow.sourcePath
+        fillMode: wallpaperWindow.imageFillMode
         asynchronous: true
         cache: true
     }

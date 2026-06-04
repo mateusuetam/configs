@@ -5,6 +5,7 @@ import "../components/theme"
 Item {
     id: backlightModule
 
+    readonly property color brightnessColor: "#fabd2f"
     property int brightnessPercent: 50
 
     implicitWidth: backlightText.implicitWidth
@@ -29,11 +30,9 @@ Item {
     Process {
         id: changeBrightness
 
-        // qmllint disable signal-handler-parameters
         onExited: {
             readBrightness.running = true;
         }
-        // qmllint enable signal-handler-parameters
     }
 
     Process {
@@ -78,7 +77,8 @@ Item {
         id: backlightText
         font.family: Theme.fontFamily
         font.pixelSize: Theme.fontSize
-        color: Theme.brightColor
+
+        color: backlightModule.brightnessColor
         anchors.verticalCenter: parent.verticalCenter
         text: `light: ${backlightModule.brightnessPercent}%`
     }

@@ -30,7 +30,6 @@ ShellRoot {
 
     IdleManager {
         id: globalIdle
-        enabled: true
         lockTarget: nativeLock
     }
 

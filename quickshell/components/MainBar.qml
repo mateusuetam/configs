@@ -3,12 +3,16 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import "../modules"
-import "../components/theme"
 
 PanelWindow {
     id: barWindow
 
-    property color borderColor: Theme.borderColor
+    readonly property color barBackgroundColor: "#282828"
+    property color barBorderColor: "#3c3836"
+
+    readonly property int barHeight: 30
+    readonly property int layoutSpacing: 12
+    readonly property int sideMargins: 6
 
     WlrLayershell.layer: WlrLayer.Top
     WlrLayershell.namespace: "mainbar"
@@ -19,21 +23,21 @@ PanelWindow {
         right: true
     }
 
-    implicitHeight: 30
-    exclusiveZone: 30
+    implicitHeight: barWindow.barHeight
+    exclusiveZone: barWindow.barHeight
     focusable: false
 
     // --- RENDERIZAÇÃO DA BARRA ---
     Rectangle {
         anchors.fill: parent
-        color: Theme.backgroundColor
+        color: barWindow.barBackgroundColor
 
         Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: parent.right
             height: 1
-            color: barWindow.borderColor
+            color: barWindow.barBorderColor
 
             Behavior on color {
                 ColorAnimation {
@@ -44,13 +48,13 @@ PanelWindow {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: 6
-            anchors.rightMargin: 6
+            anchors.leftMargin: barWindow.sideMargins
+            anchors.rightMargin: barWindow.sideMargins
 
             // <<< LADO ESQUERDO <<<
             Row {
                 id: leftModules
-                spacing: 12
+                spacing: barWindow.layoutSpacing
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
                 MprisModule {}
@@ -59,7 +63,7 @@ PanelWindow {
             // >>> LADO DIREITO >>>
             Row {
                 id: rightModules
-                spacing: 12
+                spacing: barWindow.layoutSpacing
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
                 TrayModule {

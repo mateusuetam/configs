@@ -6,6 +6,20 @@ import "../theme"
 ColumnLayout {
     id: promptRoot
 
+    readonly property color labelColor: "#d79921"
+    readonly property color inputActiveColor: "#8ec07c"
+    readonly property color inputInactiveColor: "#689d6a"
+    readonly property color errorColor: "#cc241d"
+
+    readonly property string loginText: "NOSTROMO_LOGIN_node7 > INSIRA A CHAVE DE ACESSO:"
+    readonly property string authInProgressText: "AUTENTICANDO DIRETÓRIO DE SESSÃO..."
+    readonly property string errorText: "!! ERRO: CHAVE DE ACESSO INVÁLIDA // PRIVILÉGIOS NEGADOS !!"
+
+    readonly property int labelFontSize: 16
+    readonly property int inputFontSize: 22
+    readonly property int errorFontSize: 14
+    readonly property int inputWidth: 400
+
     property bool unlockInProgress: false
     property bool showFailure: false
 
@@ -21,10 +35,10 @@ ColumnLayout {
     }
 
     Text {
-        text: promptRoot.unlockInProgress ? "AUTENTICANDO DIRETÓRIO DE SESSÃO..." : "NOSTROMO_LOGIN_node7 > INSIRA A CHAVE DE ACESSO:"
+        text: promptRoot.unlockInProgress ? promptRoot.authInProgressText : promptRoot.loginText
         font.family: Theme.fontFamily
-        font.pixelSize: 16
-        color: Theme.brightColor
+        font.pixelSize: promptRoot.labelFontSize
+        color: promptRoot.labelColor
     }
 
     RowLayout {
@@ -32,7 +46,7 @@ ColumnLayout {
 
         TextField {
             id: passwordBox
-            implicitWidth: 400
+            implicitWidth: promptRoot.inputWidth
             padding: 0
 
             focus: true
@@ -42,9 +56,9 @@ ColumnLayout {
             cursorDelegate: Item {}
 
             font.family: Theme.fontFamily
-            font.pixelSize: 22
+            font.pixelSize: promptRoot.inputFontSize
 
-            color: Theme.activeColor
+            color: promptRoot.inputActiveColor
             background: Item {}
 
             onTextChanged: promptRoot.textChanged(this.text)
@@ -53,8 +67,8 @@ ColumnLayout {
 
         Text {
             text: "▒"
-            font.pixelSize: 22
-            color: Theme.activeColor
+            font.pixelSize: promptRoot.inputFontSize
+            color: promptRoot.inputActiveColor
             visible: !promptRoot.unlockInProgress
 
             Timer {
@@ -67,19 +81,19 @@ ColumnLayout {
     }
 
     Rectangle {
-        implicitWidth: 415
+        implicitWidth: promptRoot.inputWidth + 15
         implicitHeight: 2
-        color: passwordBox.activeFocus ? Theme.activeColor : Theme.borderColor
+        color: passwordBox.activeFocus ? promptRoot.inputActiveColor : promptRoot.inputInactiveColor
     }
 
     Text {
         Layout.alignment: Qt.AlignHCenter
         visible: promptRoot.showFailure
-        text: "!! ERRO: CHAVE DE ACESSO INVÁLIDA // PRIVILÉGIOS NEGADOS !!"
+        text: promptRoot.errorText
         font.family: Theme.fontFamily
-        font.pixelSize: 14
+        font.pixelSize: promptRoot.errorFontSize
         font.bold: true
-        color: Theme.warmColor
+        color: promptRoot.errorColor
 
         Timer {
             running: promptRoot.showFailure

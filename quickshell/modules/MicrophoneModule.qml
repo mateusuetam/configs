@@ -5,6 +5,10 @@ import "../components/theme"
 Item {
     id: micModule
 
+    readonly property color mutedColor: "#fe8019"
+    readonly property color activeColor: "#b8bb26"
+    readonly property color labelColor: "#ebdbb2"
+
     readonly property var micNode: Pipewire.defaultAudioSource ? Pipewire.defaultAudioSource.audio : null
     readonly property int micPercent: micNode ? Math.round(micNode.volume * 100) : 0
     readonly property bool micMuted: micNode ? micNode.muted : false
@@ -45,10 +49,11 @@ Item {
         font.pixelSize: Theme.fontSize
         anchors.verticalCenter: parent.verticalCenter
         textFormat: Text.RichText
-        color: micModule.micMuted ? Theme.flashyColor : Theme.positiveColor
+
+        color: micModule.micMuted ? micModule.mutedColor : micModule.activeColor
 
         text: {
-            var prefix = `<span style="color: ${Theme.textColor};">mic:</span>`;
+            var prefix = `<span style="color: ${micModule.labelColor};">mic:</span>`;
             return micModule.micMuted ? `${prefix} muted` : `${prefix} ${micModule.micPercent}%`;
         }
     }
