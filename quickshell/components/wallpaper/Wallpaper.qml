@@ -7,7 +7,7 @@ PanelWindow {
     id: wallpaperWindow
 
     property url sourcePath: "file://" + Quickshell.env("HOME") + "/Imagens/afina.png"
-    readonly property int imageFillMode: Image.Center
+    readonly property int imageFillMode: Image.PreserveAspectCrop
 
     property var globalMenu: null
 
@@ -60,7 +60,7 @@ PanelWindow {
     Image {
         anchors.fill: parent
         source: wallpaperWindow.sourcePath
-        fillMode: Image.PreserveAspectCrop
+        fillMode: wallpaperWindow.imageFillMode
         horizontalAlignment: Image.AlignHCenter
         verticalAlignment: Image.AlignVCenter
         asynchronous: true
@@ -72,17 +72,20 @@ PanelWindow {
 
         anchors.fill: parent
         acceptedButtons: Qt.LeftButton | Qt.RightButton
-        propagateComposedEvents: true
-        onClicked: mouse => {
-            if (!wallpaperWindow.globalMenu)
+
+        onPressed: mouse => {
+            let menu = wallpaperWindow.globalMenu;
+            if (!menu)
                 return;
-            if (mouse.button === Qt.RightButton) {
-                wallpaperWindow.globalMenu.openAtPosition(wallpaperWindow, mouse.x, mouse.y, wallpaperWindow.desktopMenuStructure);
-                mouse.accepted = true;
-            } else if (mouse.button === Qt.LeftButton) {
-                wallpaperWindow.globalMenu.visible = false;
-                mouse.accepted = false;
-            }
+
+            if (mouse.button === Qt.RightButton)
+                menu.openAtPosition(wallpaperWindow, mouse.x, mouse.y, wallpaperWindow.desktopMenuStructure);
+            else if (mouse.button === Qt.LeftButton)
+                menu.close();
+            else
+                return;
+
+            mouse.accepted = true;
         }
     }
 }

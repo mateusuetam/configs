@@ -19,6 +19,7 @@ PopupWindow {
     readonly property int iconSize: 14
     readonly property int menuFontSize: 11
     readonly property int verticalOffset: 5
+    readonly property int menuMargins: 6
 
     property var menuModel: null
     property var _pendingModel: null
@@ -36,7 +37,7 @@ PopupWindow {
     signal itemDataActionTriggered(string actionType, var data)
 
     implicitWidth: menuWidth
-    implicitHeight: menuView.contentHeight + 12
+    implicitHeight: menuView.contentHeight + (menuMargins * 2)
     grabFocus: true
 
     onVisibleChanged: {
@@ -53,6 +54,9 @@ PopupWindow {
         if (!anchorItem)
             return;
 
+        _pendingModel = null;
+        _pendingWindow = null;
+        _pendingAnchorItem = null;
         visible = false;
 
         _pendingModel = modelData;
@@ -67,6 +71,9 @@ PopupWindow {
         if (!targetWindow)
             return;
 
+        _pendingModel = null;
+        _pendingWindow = null;
+        _pendingAnchorItem = null;
         visible = false;
 
         _pendingModel = modelData;
@@ -110,6 +117,9 @@ PopupWindow {
         repeat: false
 
         onTriggered: {
+            if (!menuPopup._pendingWindow)
+                return;
+
             menuPopup.menuModel = menuPopup._pendingModel;
 
             menuPopup._self.anchor.window = menuPopup._pendingWindow;
@@ -151,7 +161,7 @@ PopupWindow {
             id: menuView
 
             anchors.fill: parent
-            anchors.margins: 6
+            anchors.margins: menuPopup.menuMargins
 
             spacing: 2
 

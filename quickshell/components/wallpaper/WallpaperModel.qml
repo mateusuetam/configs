@@ -40,7 +40,7 @@ Item {
     Timer {
         id: rebuildDebounce
 
-        interval: 50
+        interval: 32
         repeat: false
         onTriggered: modelRoot.rebuildMenu()
     }

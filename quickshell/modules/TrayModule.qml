@@ -46,17 +46,15 @@ Item {
                     anchors.fill: parent
                     cursorShape: Qt.PointingHandCursor
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
-                    onClicked: mouse => {
-                        if (!trayItemDelegate.trayItem)
+                    onPressed: mouse => {
+                        let item = trayItemDelegate.trayItem;
+                        if (!item)
                             return;
+
                         if (mouse.button === Qt.LeftButton) {
-                            trayItemDelegate.trayItem.activate();
-                        } else if (mouse.button === Qt.RightButton) {
-                            if (trayItemDelegate.trayItem.hasMenu && trayItemDelegate.trayItem.menu) {
-                                if (trayModule.globalMenu) {
-                                    trayModule.globalMenu.openMenu(trayModule.parentWindow, trayItemDelegate, trayItemDelegate.trayItem.menu);
-                                }
-                            }
+                            item.activate();
+                        } else if (mouse.button === Qt.RightButton && item.hasMenu && item.menu && trayModule.globalMenu) {
+                            trayModule.globalMenu.openMenu(trayModule.parentWindow, trayItemDelegate, item.menu);
                         }
                     }
                 }
