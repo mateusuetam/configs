@@ -31,6 +31,7 @@ PopupWindow {
 
     readonly property var _self: menuPopup
     property bool _isAnchorMode: false
+
     readonly property bool _isDirectModel: menuPopup.menuModel !== null && (Array.isArray(menuPopup.menuModel) || typeof menuPopup.menuModel.rowCount === "function" || menuPopup.menuModel.count !== undefined)
 
     signal itemTriggered(var itemData)
@@ -53,36 +54,29 @@ PopupWindow {
     function openMenu(targetWindow, anchorItem, modelData) {
         if (!anchorItem)
             return;
-
-        _pendingModel = null;
-        _pendingWindow = null;
-        _pendingAnchorItem = null;
-        visible = false;
-
-        _pendingModel = modelData;
-        _pendingWindow = targetWindow;
+        _prepareToOpen(targetWindow, modelData);
         _pendingAnchorItem = anchorItem;
         _isAnchorMode = true;
-
         repositionTimer.restart();
     }
 
     function openAtPosition(targetWindow, x, y, modelData) {
         if (!targetWindow)
             return;
+        _prepareToOpen(targetWindow, modelData);
+        _pendingX = x;
+        _pendingY = y;
+        _isAnchorMode = false;
+        repositionTimer.restart();
+    }
 
+    function _prepareToOpen(targetWindow, modelData) {
         _pendingModel = null;
         _pendingWindow = null;
         _pendingAnchorItem = null;
         visible = false;
-
         _pendingModel = modelData;
         _pendingWindow = targetWindow;
-        _pendingX = x;
-        _pendingY = y;
-        _isAnchorMode = false;
-
-        repositionTimer.restart();
     }
 
     function handleItemTrigger(dataObj) {
@@ -108,30 +102,25 @@ PopupWindow {
         }
     }
 
-    Timer {
-        id: repositionTimer
-        interval: 32
-        repeat: false
-        onTriggered: {
-            if (!menuPopup._pendingWindow)
+    function _applyPositioning() {
+        if (!_pendingWindow)
+            return;
+
+        menuPopup.menuModel = _pendingModel;
+        _self.anchor.window = _pendingWindow;
+
+        if (_isAnchorMode) {
+            if (!_pendingAnchorItem)
                 return;
-
-            menuPopup.menuModel = menuPopup._pendingModel;
-            menuPopup._self.anchor.window = menuPopup._pendingWindow;
-
-            if (menuPopup._isAnchorMode) {
-                if (!menuPopup._pendingAnchorItem)
-                    return;
-                const windowPos = menuPopup._pendingAnchorItem.mapToItem(null, 0, menuPopup._pendingAnchorItem.height);
-                const newX = windowPos.x - (menuPopup.implicitWidth / 2) + (menuPopup._pendingAnchorItem.width / 2);
-                const newY = windowPos.y + menuPopup.verticalOffset;
-                menuPopup._self.anchor.rect = Qt.rect(newX, newY, menuPopup._pendingAnchorItem.width, 1);
-            } else {
-                menuPopup._self.anchor.rect = Qt.rect(menuPopup._pendingX, menuPopup._pendingY, 1, 1);
-            }
-
-            menuPopup.visible = true;
+            const windowPos = _pendingAnchorItem.mapToItem(null, 0, _pendingAnchorItem.height);
+            const newX = windowPos.x - (implicitWidth / 2) + (_pendingAnchorItem.width / 2);
+            const newY = windowPos.y + verticalOffset;
+            _self.anchor.rect = Qt.rect(newX, newY, _pendingAnchorItem.width, 1);
+        } else {
+            _self.anchor.rect = Qt.rect(_pendingX, _pendingY, 1, 1);
         }
+
+        menuPopup.visible = true;
     }
 
     QsMenuOpener {
@@ -139,13 +128,28 @@ PopupWindow {
         menu: menuPopup._isDirectModel ? null : menuPopup.menuModel
     }
 
+    Timer {
+        id: repositionTimer
+        interval: 32
+        repeat: false
+        onTriggered: menuPopup._applyPositioning()
+    }
+
     Rectangle {
+        id: menuBackground
         anchors.fill: parent
-        color: menuPopup.menuBackgroundColor
+        color: bgMouseArea.pressed ? Qt.lighter(menuPopup.menuBackgroundColor, 1.20) : menuPopup.menuBackgroundColor
         border.color: menuPopup.menuBorderColor
         border.width: 1
 
+        Behavior on color {
+            ColorAnimation {
+                duration: 80
+            }
+        }
+
         MouseArea {
+            id: bgMouseArea
             anchors.fill: parent
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onPressed: mouse => mouse.accepted = true
@@ -166,10 +170,7 @@ PopupWindow {
                 width: menuView.width
                 menuPopup: menuPopup
                 itemData: model.modelData !== undefined ? model.modelData : model
-
-                onTriggered: dataObj => {
-                    menuPopup.handleItemTrigger(dataObj);
-                }
+                onTriggered: dataObj => menuPopup.handleItemTrigger(dataObj)
             }
         }
     }
