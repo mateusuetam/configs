@@ -15,7 +15,6 @@ Item {
     readonly property string itemType: {
         const type = safeData.type;
         const validTypes = ["action", "separator", "submenu", "toggle", "slider"];
-
         if (validTypes.indexOf(type) !== -1)
             return type;
         return safeData.isSeparator ? "separator" : "action";
@@ -31,13 +30,6 @@ Item {
     height: isSeparator ? menuPopup.separatorHeight : (isSlider ? menuPopup.itemHeight * 1.5 : menuPopup.itemHeight)
 
     Component {
-        id: separatorComponent
-        MenuSeparator {
-            menuPopup: delegateRoot.menuPopup
-        }
-    }
-
-    Component {
         id: actionComponent
         MenuAction {
             safeData: delegateRoot.safeData
@@ -45,7 +37,15 @@ Item {
             isEnabled: delegateRoot.isEnabled
             isSubmenu: delegateRoot.isSubmenu
             isToggle: delegateRoot.isToggle
+            isCurrentKeyboardItem: delegateRoot.ListView.isCurrentItem
             onTriggered: dataObj => delegateRoot.triggered(dataObj)
+        }
+    }
+
+    Component {
+        id: separatorComponent
+        MenuSeparator {
+            menuPopup: delegateRoot.menuPopup
         }
     }
 

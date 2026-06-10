@@ -14,6 +14,8 @@ Item {
     readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
     readonly property int labelFontSize: TypographyRegistry.appliedFontSize
 
+    readonly property var ptBr: Qt.locale("pt_BR")
+
     implicitWidth: clockRow.implicitWidth
     implicitHeight: clockModule.parentWindow ? clockModule.parentWindow.barHeight : 30
 
@@ -28,10 +30,10 @@ Item {
         readonly property var formattedParts: {
             const d = systemClock.date;
             return {
-                weekday: Qt.formatDateTime(d, "ddd, "),
-                day: Qt.formatDateTime(d, "d'th' "),
-                month: Qt.formatDateTime(d, "MMMM "),
-                time: Qt.formatDateTime(d, "| hh:mm")
+                weekday: ptBr.toString(d, "ddd "),
+                day: ptBr.toString(d, "d "),
+                month: ptBr.toString(d, "MMMM "),
+                time: ptBr.toString(d, "- HH:mm")
             };
         }
         Text {
@@ -49,7 +51,7 @@ Item {
         Text {
             font: clockBase.font
             color: clockModule.labelColor
-            text: "of "
+            text: "de "
         }
         Text {
             font: clockBase.font

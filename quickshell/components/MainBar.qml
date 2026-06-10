@@ -9,6 +9,7 @@ PanelWindow {
     id: barWindow
 
     property var globalMenu: null
+    property alias appsModule: appLauncherModuleInstance
 
     readonly property color barBackgroundColor: ColorRegistry.mainbarBackgroundColor
     property color barBorderColor: ColorRegistry.mainbarBorderColor
@@ -27,7 +28,7 @@ PanelWindow {
 
     implicitHeight: barWindow.barHeight
     exclusiveZone: barWindow.barHeight
-    focusable: false
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
 
     // --- RENDERIZAÇÃO DA BARRA ---
     Rectangle {
@@ -69,7 +70,6 @@ PanelWindow {
             Row {
                 id: leftModules
                 Layout.fillHeight: true
-
                 spacing: barWindow.layoutSpacing
                 Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
 
@@ -83,7 +83,6 @@ PanelWindow {
             Row {
                 id: rightModules
                 Layout.fillHeight: true
-
                 spacing: barWindow.layoutSpacing
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
 
@@ -133,6 +132,12 @@ PanelWindow {
                 }
 
                 ClockModule {
+                    parentWindow: barWindow
+                    globalMenu: barWindow.globalMenu
+                }
+
+                AppLauncherModule {
+                    id: appLauncherModuleInstance
                     parentWindow: barWindow
                     globalMenu: barWindow.globalMenu
                 }

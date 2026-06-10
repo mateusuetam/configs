@@ -12,6 +12,10 @@ Item {
     property alias inputHasFocus: textInput.focus
     property alias text: textInput.text
 
+    function forceFocusNow() {
+        textInput.forceActiveFocus();
+    }
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
@@ -30,6 +34,20 @@ Item {
             color: searchRoot.menuPopup ? searchRoot.menuPopup.itemTextColor : "#fff"
             focus: true
             selectByMouse: true
+            Keys.onPressed: event => {
+                if (event.key === Qt.Key_Down) {
+                    searchRoot.menuPopup.focusListView();
+                    event.accepted = true;
+                } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                    let view = searchRoot.menuPopup.menuView;
+                    if (view && view.model && view.model.length > 0) {
+                        const firstItem = view.model[0];
+                        const dataObj = firstItem.modelData !== undefined ? firstItem.modelData : firstItem;
+                        searchRoot.menuPopup.handleItemTrigger(dataObj);
+                    }
+                    event.accepted = true;
+                }
+            }
         }
 
         Text {

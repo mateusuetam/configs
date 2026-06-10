@@ -9,6 +9,7 @@ Item {
     required property bool isEnabled
     required property bool isSubmenu
     required property bool isToggle
+    required property bool isCurrentKeyboardItem
 
     signal triggered(var dataObj)
 
@@ -17,7 +18,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: mouseArea.containsMouse ? actionRoot.menuPopup.itemHoverColor : "transparent"
+        color: (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem) ? actionRoot.menuPopup.itemHoverColor : "transparent"
 
         Row {
             anchors.fill: parent
@@ -40,15 +41,12 @@ Item {
                 text: (actionRoot._actualData && actionRoot._actualData.text) || ""
                 width: actionRoot.width - (actionRoot.hasIcon ? (actionRoot.menuPopup.iconSize + 24) : 16)
                 anchors.verticalCenter: parent.verticalCenter
-                color: mouseArea.containsMouse ? actionRoot.menuPopup.itemTextHoverColor : actionRoot.menuPopup.itemTextColor
+                color: (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem) ? actionRoot.menuPopup.itemTextHoverColor : actionRoot.menuPopup.itemTextColor
                 font.family: actionRoot.menuPopup.labelFontFamily
                 font.pixelSize: actionRoot.menuPopup.menuFontSize
                 elide: Text.ElideRight
             }
         }
-
-        // TODO: Inserir um indicador visual (setinha para a direita se isSubmenu === true)
-        // TODO: Inserir um Switch/Checkbox a direita se isToggle === true
 
         MouseArea {
             id: mouseArea

@@ -15,6 +15,15 @@ ShellRoot {
     }
 
     IpcHandler {
+        target: "app_launcher"
+        function open(): void {
+            if (mainBarWindow && mainBarWindow.appsModule) {
+                mainBarWindow.appsModule.refreshAndOpenApps();
+            }
+        }
+    }
+
+    IpcHandler {
         target: "lock_manager"
         function lock(): void {
             globalIdle.lockScreen();

@@ -7,6 +7,7 @@ PanelWindow {
     id: wallpaperWindow
 
     required property var globalMenu
+    property var focusWindow: null
 
     property url sourcePath: "file://" + Quickshell.env("HOME") + "/Imagens/afina.png"
     readonly property int imageFillMode: Image.PreserveAspectCrop
@@ -35,9 +36,7 @@ PanelWindow {
         function onItemDataActionTriggered(actionType, data) {
             switch (actionType) {
             case "open_wallpaper_submenu":
-                if (wallpaperWindow.globalMenu) {
-                    wallpaperWindow.globalMenu.menuModel = backendModel.subMenuStructure;
-                }
+                wallpaperWindow.globalMenu.menuModel = backendModel.subMenuStructure;
                 break;
             case "change_wallpaper":
                 backendModel.wallpaperSelected(data);
@@ -76,6 +75,7 @@ PanelWindow {
                 return;
             mouse.accepted = true;
             if (mouse.button === Qt.RightButton) {
+                menu.showSearchInput = false;
                 menu.openAtPosition(wallpaperWindow, mouse.x, mouse.y, wallpaperWindow.desktopMenuStructure);
             } else if (mouse.button === Qt.LeftButton) {
                 menu.close();

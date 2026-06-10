@@ -92,7 +92,7 @@ Item {
             font.family: powermenuModule.labelFontFamily
             font.pixelSize: powermenuModule.labelFontSize
             color: powermenuModule.sessionColor
-            text: "-SESS-"
+            text: "[SESS]"
         }
     }
 }
