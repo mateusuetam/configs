@@ -1,9 +1,0 @@
-*{
-font:"Monaspace Krypton NF 12";
-text-color:#ebdbb2;
-background:#282828;
-border-color:#bdae93;
-hover:#1d2021;
-input:#32302f;
-background-color:transparent;
-}

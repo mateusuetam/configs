@@ -12,8 +12,8 @@ PopupWindow {
     readonly property color lowUrgencyColor: ColorRegistry.notificationLowColor
     readonly property color normalUrgencyColor: ColorRegistry.notificationNormalColor
     readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
-    readonly property int headerFontSize: 16
-    readonly property int bodyFontSize: 14
+    readonly property int headerFontSize: TypographyRegistry.appliedHeaderFontSize
+    readonly property int bodyFontSize: TypographyRegistry.appliedFontSize
 
     readonly property color notifyColor: {
         if (!currentNotify) {

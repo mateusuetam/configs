@@ -4,10 +4,10 @@ import QtQuick
 Item {
     id: searchRoot
 
-    property var menuPopup: null
+    required property var menuPopup
 
     width: parent ? parent.width : 200
-    height: searchRoot.menuPopup ? searchRoot.menuPopup.itemHeight + 8 : 34
+    height: menuPopup.itemHeight + 8
 
     property alias inputHasFocus: textInput.focus
     property alias text: textInput.text
@@ -19,8 +19,8 @@ Item {
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
-        color: searchRoot.menuPopup ? Qt.darker(searchRoot.menuPopup.menuBackgroundColor, 1.15) : "#1a1a1a"
-        border.color: searchRoot.menuPopup ? searchRoot.menuPopup.menuBorderColor : "#333"
+        color: Qt.darker(searchRoot.menuPopup.menuBackgroundColor, 1.15)
+        border.color: searchRoot.menuPopup.menuBorderColor
         border.width: 1
 
         TextInput {
@@ -29,16 +29,14 @@ Item {
             anchors.leftMargin: 8
             anchors.rightMargin: 8
             verticalAlignment: TextInput.AlignVCenter
-            font.family: searchRoot.menuPopup ? searchRoot.menuPopup.labelFontFamily : "sans"
-            font.pixelSize: searchRoot.menuPopup ? searchRoot.menuPopup.menuFontSize : 11
-            color: searchRoot.menuPopup ? searchRoot.menuPopup.itemTextColor : "#fff"
+            font.family: searchRoot.menuPopup.labelFontFamily
+            font.pixelSize: searchRoot.menuPopup.menuFontSize
+            color: searchRoot.menuPopup.itemTextColor
             focus: true
             selectByMouse: true
             clip: true
 
             Keys.onPressed: event => {
-                if (!searchRoot.menuPopup)
-                    return;
                 switch (event.key) {
                 case Qt.Key_Down:
                 case Qt.Key_Tab:
@@ -65,7 +63,7 @@ Item {
             verticalAlignment: Text.AlignVCenter
             text: "Pesquisar..."
             font: textInput.font
-            color: searchRoot.menuPopup ? Qt.alpha(searchRoot.menuPopup.itemTextColor, 0.4) : "#888"
+            color: Qt.alpha(searchRoot.menuPopup.itemTextColor, 0.4)
             visible: textInput.text === ""
         }
     }

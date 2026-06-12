@@ -5,29 +5,13 @@ import Quickshell.Io
 import "components"
 import "components/wallpaper"
 import "components/lockscreen"
-import "components/contextmenu"
+import "components/popupmenu"
 
 ShellRoot {
     id: shellScope
 
     ContextMenu {
         id: sharedContextMenu
-    }
-
-    IpcHandler {
-        target: "app_launcher"
-        function open(): void {
-            if (mainBarWindow && mainBarWindow.appsModule) {
-                mainBarWindow.appsModule.refreshAndOpenApps();
-            }
-        }
-    }
-
-    IpcHandler {
-        target: "lock_manager"
-        function lock(): void {
-            globalIdle.lockScreen();
-        }
     }
 
     Wallpaper {
@@ -39,6 +23,15 @@ ShellRoot {
         id: mainBarWindow
         screen: Quickshell.screens[0]
         globalMenu: sharedContextMenu
+    }
+
+    IpcHandler {
+        target: "app_launcher"
+        function open(): void {
+            if (mainBarWindow && mainBarWindow.appsModule) {
+                mainBarWindow.appsModule.refreshAndOpenApps();
+            }
+        }
     }
 
     NotificationPopup {
@@ -53,5 +46,12 @@ ShellRoot {
 
     LockScreen {
         id: nativeLock
+    }
+
+    IpcHandler {
+        target: "lock_manager"
+        function lock(): void {
+            globalIdle.lockScreen();
+        }
     }
 }

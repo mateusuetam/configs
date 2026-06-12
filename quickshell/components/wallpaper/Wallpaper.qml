@@ -51,9 +51,12 @@ PanelWindow {
                 break;
             }
         }
+
         function onVisibleChanged() {
             if (wallpaperWindow.globalMenu && !wallpaperWindow.globalMenu.visible) {
-                wallpaperWindow.focusable = false;
+                if (!wallpaperWindow.globalMenu._isInternalReset) {
+                    wallpaperWindow.focusable = false;
+                }
             }
         }
     }

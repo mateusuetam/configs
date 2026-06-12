@@ -51,7 +51,9 @@ PopupWindow {
                     }
                 });
             } else {
-                menuBackground.forceActiveFocus();
+                Qt.callLater(() => {
+                    menuBackground.forceActiveFocus();
+                });
             }
         } else {
             if (!_isInternalReset) {
@@ -261,16 +263,24 @@ PopupWindow {
             anchors.margins: menuPopup.menuMargins
             anchors.bottomMargin: 0
             visible: menuPopup.showSearchInput
-            source: menuPopup.showSearchInput ? "MenuSearchInput.qml" : ""
+            active: menuPopup.showSearchInput
+            sourceComponent: searchInputComponent
             onLoaded: {
                 if (item) {
-                    item.menuPopup = menuPopup;
                     item.inputHasFocus = true;
                     item.forceFocusNow();
+
                     item.textChanged.connect(() => {
                         menuPopup.filterText = item.text;
                     });
                 }
+            }
+        }
+
+        Component {
+            id: searchInputComponent
+            MenuSearchInput {
+                menuPopup: menuPopup
             }
         }
 

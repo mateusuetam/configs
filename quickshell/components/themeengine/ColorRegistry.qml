@@ -53,12 +53,13 @@ QtObject {
     // MainBar
     readonly property color mainbarBackgroundColor: Gruvbox.dark0
     readonly property color mainbarBorderColor: Gruvbox.dark1
-    // ContextMenu
+    // Menu
     readonly property color menuBackgroundColor: Gruvbox.dark0
     readonly property color menuBorderColor: Gruvbox.dark1
     readonly property color menuTextHoverColor: Gruvbox.dark2
     readonly property color menuTextColor: Gruvbox.light1
     readonly property color menuHoverColor: Gruvbox.bright_orange
+    readonly property color menuErrorColor: Gruvbox.bright_red
     // Notifications
     readonly property color notificationBackgroundColor: Gruvbox.dark0
     readonly property color notificationCriticalColor: Gruvbox.bright_red
