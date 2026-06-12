@@ -1,16 +1,15 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../themeengine"
 
 Item {
     id: separatorRoot
-
-    required property var menuPopup
-
+    readonly property color menuBorderColor: ColorRegistry.menuBorderColor
     Rectangle {
         width: parent.width - 12
         height: 1
         anchors.centerIn: parent
-        color: separatorRoot.menuPopup.menuBorderColor
+        color: separatorRoot.menuBorderColor
         opacity: 0.6
     }
 }

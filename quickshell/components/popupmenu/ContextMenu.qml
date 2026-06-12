@@ -8,15 +8,10 @@ PopupWindow {
 
     readonly property color menuBackgroundColor: ColorRegistry.menuBackgroundColor
     readonly property color menuBorderColor: ColorRegistry.menuBorderColor
-    readonly property color itemTextColor: ColorRegistry.menuTextColor
-    readonly property color itemHoverColor: ColorRegistry.menuHoverColor
-    readonly property color itemTextHoverColor: ColorRegistry.menuTextHoverColor
-    readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
 
     readonly property int menuWidth: 200
     readonly property int itemHeight: 26
     readonly property int separatorHeight: 8
-    readonly property int menuFontSize: 11
     readonly property int verticalOffset: 5
     readonly property int menuMargins: 6
     readonly property int menuMaxHeight: 450
@@ -269,9 +264,19 @@ PopupWindow {
                 if (item) {
                     item.inputHasFocus = true;
                     item.forceFocusNow();
-
                     item.textChanged.connect(() => {
                         menuPopup.filterText = item.text;
+                    });
+                    item.navigationDownRequested.connect(() => {
+                        menuPopup.focusListView();
+                    });
+                    item.actionTriggeredRequested.connect(() => {
+                        const currentModel = menuPopup.getFilteredModel();
+                        if (currentModel && currentModel.length > 0) {
+                            const firstItem = currentModel[0];
+                            const dataObj = firstItem.modelData !== undefined ? firstItem.modelData : firstItem;
+                            menuPopup.handleItemTrigger(dataObj);
+                        }
                     });
                 }
             }
@@ -280,7 +285,7 @@ PopupWindow {
         Component {
             id: searchInputComponent
             MenuSearchInput {
-                menuPopup: menuPopup
+                itemHeight: menuPopup.itemHeight
             }
         }
 
@@ -301,15 +306,14 @@ PopupWindow {
             onModelChanged: currentIndex = -1
             highlightFollowsCurrentItem: true
             model: menuPopup.getFilteredModel()
-
             delegate: MenuItemDelegate {
                 required property var model
                 width: menuView.width
-                menuPopup: menuPopup
+                itemHeight: menuPopup.itemHeight
+                separatorHeight: menuPopup.separatorHeight
                 itemData: model.modelData !== undefined ? model.modelData : model
                 onTriggered: dataObj => menuPopup.handleItemTrigger(dataObj)
             }
-
             MouseArea {
                 z: -1
                 anchors.fill: parent

@@ -1,26 +1,36 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../themeengine"
 
 Item {
     id: searchRoot
 
-    required property var menuPopup
+    readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
+    readonly property int labelFontSize: TypographyRegistry.appliedMenuFontSize
+    readonly property color menuTextColor: ColorRegistry.menuTextColor
+    readonly property color menuBorderColor: ColorRegistry.menuBorderColor
+    readonly property color menuBackgroundColor: ColorRegistry.menuBackgroundColor
 
-    width: parent ? parent.width : 200
-    height: menuPopup.itemHeight + 8
+    property int itemHeight: 26
 
     property alias inputHasFocus: textInput.focus
     property alias text: textInput.text
+
+    signal navigationDownRequested
+    signal actionTriggeredRequested
 
     function forceFocusNow() {
         textInput.forceActiveFocus();
     }
 
+    width: parent ? parent.width : 200
+    height: itemHeight + 8
+
     Rectangle {
         anchors.fill: parent
         anchors.margins: 4
-        color: Qt.darker(searchRoot.menuPopup.menuBackgroundColor, 1.15)
-        border.color: searchRoot.menuPopup.menuBorderColor
+        color: Qt.darker(searchRoot.menuBackgroundColor, 1.15)
+        border.color: searchRoot.menuBorderColor
         border.width: 1
 
         TextInput {
@@ -29,9 +39,9 @@ Item {
             anchors.leftMargin: 8
             anchors.rightMargin: 8
             verticalAlignment: TextInput.AlignVCenter
-            font.family: searchRoot.menuPopup.labelFontFamily
-            font.pixelSize: searchRoot.menuPopup.menuFontSize
-            color: searchRoot.menuPopup.itemTextColor
+            font.family: searchRoot.labelFontFamily
+            font.pixelSize: searchRoot.labelFontSize
+            color: searchRoot.menuTextColor
             focus: true
             selectByMouse: true
             clip: true
@@ -40,17 +50,12 @@ Item {
                 switch (event.key) {
                 case Qt.Key_Down:
                 case Qt.Key_Tab:
-                    searchRoot.menuPopup.focusListView();
+                    searchRoot.navigationDownRequested();
                     event.accepted = true;
                     break;
                 case Qt.Key_Return:
                 case Qt.Key_Enter:
-                    const currentModel = searchRoot.menuPopup.getFilteredModel();
-                    if (currentModel && currentModel.length > 0) {
-                        const firstItem = currentModel[0];
-                        const dataObj = firstItem.modelData !== undefined ? firstItem.modelData : firstItem;
-                        searchRoot.menuPopup.handleItemTrigger(dataObj);
-                    }
+                    searchRoot.actionTriggeredRequested();
                     event.accepted = true;
                     break;
                 }
@@ -63,7 +68,8 @@ Item {
             verticalAlignment: Text.AlignVCenter
             text: "Pesquisar..."
             font: textInput.font
-            color: Qt.alpha(searchRoot.menuPopup.itemTextColor, 0.4)
+            color: searchRoot.menuTextColor
+            opacity: 0.4
             visible: textInput.text === ""
         }
     }

@@ -5,7 +5,9 @@ Item {
     id: delegateRoot
 
     required property var itemData
-    required property var menuPopup
+
+    property int itemHeight: 26
+    property int separatorHeight: 8
 
     signal triggered(var dataObj)
 
@@ -15,24 +17,23 @@ Item {
     readonly property string itemType: {
         const type = safeData.type;
         const validTypes = ["action", "separator", "submenu", "toggle", "slider"];
-        if (validTypes.includes(type)) return type;
+        if (validTypes.includes(type))
+            return type;
         return safeData.isSeparator ? "separator" : "action";
     }
 
     readonly property bool isSeparator: itemType === "separator"
-    readonly property bool isAction: itemType === "action"
+    readonly property bool isSlider: itemType === "slider"
     readonly property bool isSubmenu: itemType === "submenu"
     readonly property bool isToggle: itemType === "toggle"
-    readonly property bool isSlider: itemType === "slider"
 
     width: ListView.view ? ListView.view.width : 0
-    height: isSeparator ? menuPopup.separatorHeight : (isSlider ? menuPopup.itemHeight * 1.5 : menuPopup.itemHeight)
+    height: isSeparator ? separatorHeight : (isSlider ? itemHeight * 1.5 : itemHeight)
 
     Component {
         id: actionComponent
         MenuAction {
             safeData: delegateRoot.safeData
-            menuPopup: delegateRoot.menuPopup
             isEnabled: delegateRoot.isEnabled
             isSubmenu: delegateRoot.isSubmenu
             isToggle: delegateRoot.isToggle
@@ -43,16 +44,13 @@ Item {
 
     Component {
         id: separatorComponent
-        MenuSeparator {
-            menuPopup: delegateRoot.menuPopup
-        }
+        MenuSeparator {}
     }
 
     Component {
         id: sliderComponent
         MenuSlider {
             safeData: delegateRoot.safeData
-            menuPopup: delegateRoot.menuPopup
             isEnabled: delegateRoot.isEnabled
         }
     }
@@ -60,8 +58,10 @@ Item {
     Loader {
         anchors.fill: parent
         sourceComponent: {
-            if (delegateRoot.isSeparator) return separatorComponent;
-            if (delegateRoot.isSlider) return sliderComponent;
+            if (delegateRoot.isSeparator)
+                return separatorComponent;
+            // ativar a renderização visual do Slider:
+            // if (delegateRoot.isSlider) return sliderComponent;
             return actionComponent;
         }
     }

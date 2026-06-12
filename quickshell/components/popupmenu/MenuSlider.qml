@@ -1,11 +1,16 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../themeengine"
 
 Item {
     id: sliderRoot
 
+    readonly property color menuBorderColor: ColorRegistry.menuBorderColor
+    readonly property color menuBackgroundColor: ColorRegistry.menuBackgroundColor
+    readonly property color itemTextColor: ColorRegistry.menuTextColor
+    readonly property color itemTextHoverColor: ColorRegistry.menuTextHoverColor
+
     required property var safeData
-    required property var menuPopup
     required property bool isEnabled
 
     property real value: safeData.value !== undefined ? safeData.value : 0.5
@@ -19,60 +24,58 @@ Item {
             return;
 
         const pct = Math.max(0.0, Math.min(1.0, mouseX / trackWidth));
-        sliderRoot.value = sliderRoot.minValue + pct * (sliderRoot.maxValue - sliderRoot.minValue);
+        const rawValue = sliderRoot.minValue + pct * (sliderRoot.maxValue - sliderRoot.minValue);
+        const cleanedValue = Math.round(rawValue * 100) / 100;
 
-        if (typeof sliderRoot.safeData.onValueChanged === "function") {
-            sliderRoot.safeData.onValueChanged(sliderRoot.value);
+        if (sliderRoot.value !== cleanedValue) {
+            sliderRoot.value = cleanedValue;
+            if (typeof sliderRoot.safeData.onValueChanged === "function") {
+                sliderRoot.safeData.onValueChanged(sliderRoot.value);
+            }
         }
     }
 
-    Row {
+    Item {
+        id: trackContainer
         anchors.fill: parent
-        anchors.leftMargin: 8
-        anchors.rightMargin: 8
-        spacing: 8
+        anchors.leftMargin: 12
+        anchors.rightMargin: 12
 
-        Item {
+        Rectangle {
+            id: trackBg
             width: parent.width
-            height: parent.height
+            height: 4
+            anchors.verticalCenter: parent.verticalCenter
+            color: Qt.darker(sliderRoot.menuBorderColor, 1.2)
+        }
 
-            Rectangle {
-                id: trackBg
-                width: parent.width
-                height: 4
-                anchors.verticalCenter: parent.verticalCenter
-                color: Qt.darker(sliderRoot.menuPopup.menuBorderColor, 1.2)
-            }
+        Rectangle {
+            id: trackFill
+            readonly property real range: sliderRoot.maxValue - sliderRoot.minValue
+            readonly property real fillPct: range > 0 ? Math.max(0, Math.min(1, (sliderRoot.value - sliderRoot.minValue) / range)) : 0
+            width: trackBg.width * fillPct
+            height: 4
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.left: trackBg.left
+            color: sliderRoot.itemTextHoverColor
+        }
 
-            Rectangle {
-                id: trackFill
-                readonly property real range: sliderRoot.maxValue - sliderRoot.minValue
-                readonly property real fillPct: range > 0 ? Math.max(0, Math.min(1, (sliderRoot.value - sliderRoot.minValue) / range)) : 0
+        Rectangle {
+            width: 12
+            height: 12
+            anchors.verticalCenter: parent.verticalCenter
+            x: Math.max(0, Math.min(trackBg.width - width, trackFill.width - (width / 2)))
+            color: sliderRoot.itemTextColor
+            border.color: sliderRoot.menuBackgroundColor
+            border.width: 1
+        }
 
-                width: trackBg.width * fillPct
-                height: 4
-                anchors.verticalCenter: parent.verticalCenter
-                anchors.left: trackBg.left
-                color: sliderRoot.menuPopup.itemTextHoverColor
-            }
-
-            Rectangle {
-                width: 12
-                height: 12
-                anchors.verticalCenter: parent.verticalCenter
-                x: Math.max(0, Math.min(trackBg.width - width, trackFill.width - (width / 2)))
-                color: sliderRoot.menuPopup.itemTextColor
-                border.color: sliderRoot.menuPopup.menuBackgroundColor
-                border.width: 1
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                enabled: sliderRoot.isEnabled
-                cursorShape: Qt.PointingHandCursor
-                onPressed: mouse => sliderRoot.updateValueFromMouse(mouse.x, width)
-                onPositionChanged: mouse => sliderRoot.updateValueFromMouse(mouse.x, width)
-            }
+        MouseArea {
+            anchors.fill: parent
+            enabled: sliderRoot.isEnabled
+            cursorShape: Qt.PointingHandCursor
+            onPressed: mouse => sliderRoot.updateValueFromMouse(mouse.x, width)
+            onPositionChanged: mouse => sliderRoot.updateValueFromMouse(mouse.x, width)
         }
     }
 }

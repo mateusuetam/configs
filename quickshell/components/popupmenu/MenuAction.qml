@@ -1,11 +1,17 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../themeengine"
 
 Item {
     id: actionRoot
 
+    readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
+    readonly property int labelFontSize: TypographyRegistry.appliedMenuFontSize
+    readonly property color menuTextColor: ColorRegistry.menuTextColor
+    readonly property color menuTextHoverColor: ColorRegistry.menuTextHoverColor
+    readonly property color menuHoverColor: ColorRegistry.menuHoverColor
+
     required property var safeData
-    required property var menuPopup
     required property bool isEnabled
     required property bool isSubmenu
     required property bool isToggle
@@ -19,7 +25,7 @@ Item {
 
     Rectangle {
         anchors.fill: parent
-        color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuPopup.itemHoverColor : "transparent"
+        color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuHoverColor : "transparent"
 
         Row {
             anchors.fill: parent
@@ -32,9 +38,9 @@ Item {
                 text: actionRoot._actualData.text || ""
                 width: parent.width
                 anchors.verticalCenter: parent.verticalCenter
-                color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuPopup.itemTextHoverColor : actionRoot.menuPopup.itemTextColor
-                font.family: actionRoot.menuPopup.labelFontFamily
-                font.pixelSize: actionRoot.menuPopup.menuFontSize
+                color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuTextHoverColor : actionRoot.menuTextColor
+                font.family: actionRoot.labelFontFamily
+                font.pixelSize: actionRoot.labelFontSize
                 elide: Text.ElideRight
             }
         }
