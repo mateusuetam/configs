@@ -13,8 +13,6 @@ Item {
 
     required property var safeData
     required property bool isEnabled
-    required property bool isSubmenu
-    required property bool isToggle
     required property bool isCurrentKeyboardItem
 
     signal triggered(var dataObj)
@@ -35,7 +33,7 @@ Item {
 
             Text {
                 id: itemText
-                text: actionRoot._actualData.text || ""
+                text: (actionRoot._actualData && actionRoot._actualData.text) ? actionRoot._actualData.text : ""
                 width: parent.width
                 anchors.verticalCenter: parent.verticalCenter
                 color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuTextHoverColor : actionRoot.menuTextColor

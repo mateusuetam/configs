@@ -132,8 +132,7 @@ Item {
 
         if (pairedDevices.length > 0) {
             menuModel.push({
-                text: "─ Dispositivos Pareados ─",
-                enabled: false
+                type: "separator"
             });
             for (let j = 0; j < pairedDevices.length; j++) {
                 let pDev = pairedDevices[j];
@@ -153,8 +152,7 @@ Item {
 
         if (newDevices.length > 0) {
             menuModel.push({
-                text: "─ Dispositivos Achados ─",
-                enabled: false
+                type: "separator"
             });
 
             for (let k = 0; k < newDevices.length; k++) {

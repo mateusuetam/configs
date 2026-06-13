@@ -6,6 +6,7 @@ packages=(
 "bc"
 "brightnessctl"
 "cliphist"
+"discord"
 "docker"
 "firefox"
 "gammastep"

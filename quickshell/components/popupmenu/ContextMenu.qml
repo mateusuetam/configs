@@ -104,20 +104,21 @@ PopupWindow {
     function handleItemTrigger(dataObj) {
         if (!dataObj || dataObj.enabled === false || dataObj.isSeparator || dataObj.type === "separator")
             return;
-
+        if (typeof dataObj.triggered === 'function') {
+            dataObj.triggered();
+            close();
+            return;
+        }
         itemTriggered(dataObj);
-
         if (dataObj.actionType !== undefined) {
             itemDataActionTriggered(dataObj.actionType, dataObj.actionData);
         }
-
-        if (typeof dataObj.onTrigger === "function")
+        if (typeof dataObj.onTrigger === 'function')
             dataObj.onTrigger();
-        else if (typeof dataObj.triggered === "function")
+        else if (typeof dataObj.triggered === 'function')
             dataObj.triggered();
-        else if (typeof dataObj.trigger === "function")
+        else if (typeof dataObj.trigger === 'function')
             dataObj.trigger();
-
         if (dataObj.closeOnTrigger !== false && dataObj.preventClose !== true) {
             close();
         }
@@ -262,7 +263,6 @@ PopupWindow {
             sourceComponent: searchInputComponent
             onLoaded: {
                 if (item) {
-                    item.inputHasFocus = true;
                     item.forceFocusNow();
                     item.textChanged.connect(() => {
                         menuPopup.filterText = item.text;

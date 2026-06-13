@@ -13,7 +13,6 @@ Item {
 
     property int itemHeight: 26
 
-    property alias inputHasFocus: textInput.focus
     property alias text: textInput.text
 
     signal navigationDownRequested
