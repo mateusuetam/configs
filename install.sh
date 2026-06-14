@@ -20,7 +20,6 @@ packages=(
 "niri"
 "openssh"
 "otf-monaspace-nerdfonts"
-"prismlauncher"
 "qtcreator"
 "quickshell"
 "steam"

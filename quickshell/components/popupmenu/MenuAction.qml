@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import "../themeengine"
 
-Item {
+Rectangle {
     id: actionRoot
 
     readonly property string labelFontFamily: TypographyRegistry.appliedFontFamily
@@ -20,41 +20,31 @@ Item {
     readonly property var _actualData: actionRoot.safeData || ({})
 
     opacity: actionRoot.isEnabled ? 1.0 : 0.5
+    color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuHoverColor : "transparent"
 
-    Rectangle {
+    Text {
+        id: itemText
         anchors.fill: parent
-        color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuHoverColor : "transparent"
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        verticalAlignment: Text.AlignVCenter
+        text: (actionRoot._actualData && actionRoot._actualData.text) ? actionRoot._actualData.text : ""
+        color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuTextHoverColor : actionRoot.menuTextColor
+        font.family: actionRoot.labelFontFamily
+        font.pixelSize: actionRoot.labelFontSize
+        elide: Text.ElideRight
+    }
 
-        Row {
-            anchors.fill: parent
-            anchors.leftMargin: 8
-            anchors.rightMargin: 8
-            spacing: 8
-
-            Text {
-                id: itemText
-                text: (actionRoot._actualData && actionRoot._actualData.text) ? actionRoot._actualData.text : ""
-                width: parent.width
-                anchors.verticalCenter: parent.verticalCenter
-                color: (actionRoot.isEnabled && (mouseArea.containsMouse || actionRoot.isCurrentKeyboardItem)) ? actionRoot.menuTextHoverColor : actionRoot.menuTextColor
-                font.family: actionRoot.labelFontFamily
-                font.pixelSize: actionRoot.labelFontSize
-                elide: Text.ElideRight
-            }
-        }
-
-        MouseArea {
-            id: mouseArea
-            anchors.fill: parent
-            enabled: actionRoot.isEnabled
-            hoverEnabled: actionRoot.isEnabled
-            cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
-            acceptedButtons: Qt.LeftButton
-            onPressed: mouse => {
-                mouse.accepted = true;
-                if (mouse.button === Qt.LeftButton && actionRoot._actualData) {
-                    actionRoot.triggered(actionRoot._actualData);
-                }
+    MouseArea {
+        id: mouseArea
+        anchors.fill: parent
+        enabled: actionRoot.isEnabled
+        hoverEnabled: actionRoot.isEnabled
+        cursorShape: hoverEnabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+        acceptedButtons: Qt.LeftButton
+        onPressed: {
+            if (actionRoot._actualData) {
+                actionRoot.triggered(actionRoot._actualData);
             }
         }
     }

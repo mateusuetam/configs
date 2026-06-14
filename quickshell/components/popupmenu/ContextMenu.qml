@@ -27,8 +27,12 @@ PopupWindow {
     property bool _isAnchorMode: false
     property bool _isInternalReset: false
 
-    readonly property bool _isDirectModel: menuPopup.menuModel !== null && (Array.isArray(menuPopup.menuModel) || typeof menuPopup.menuModel.rowCount === "function" || menuPopup.menuModel.count !== undefined)
     readonly property alias menuView: menuView
+    readonly property bool _isDirectModel: menuPopup.menuModel !== null && (Array.isArray(menuPopup.menuModel) || typeof menuPopup.menuModel.rowCount === "function" || menuPopup.menuModel.count !== undefined)
+    readonly property var _unfilteredModel: menuPopup._isDirectModel ? menuPopup.menuModel : menuOpener.children
+    property var _currentFilteredModel: []
+
+    onFilterTextChanged: _updateFilteredModel()
 
     signal itemTriggered(var itemData)
     signal itemDataActionTriggered(string actionType, var data)
@@ -104,21 +108,19 @@ PopupWindow {
     function handleItemTrigger(dataObj) {
         if (!dataObj || dataObj.enabled === false || dataObj.isSeparator || dataObj.type === "separator")
             return;
-        if (typeof dataObj.triggered === 'function') {
-            dataObj.triggered();
-            close();
-            return;
-        }
+
         itemTriggered(dataObj);
         if (dataObj.actionType !== undefined) {
             itemDataActionTriggered(dataObj.actionType, dataObj.actionData);
         }
+
         if (typeof dataObj.onTrigger === 'function')
             dataObj.onTrigger();
         else if (typeof dataObj.triggered === 'function')
             dataObj.triggered();
         else if (typeof dataObj.trigger === 'function')
             dataObj.trigger();
+
         if (dataObj.closeOnTrigger !== false && dataObj.preventClose !== true) {
             close();
         }
@@ -149,17 +151,19 @@ PopupWindow {
         menu: menuPopup._isDirectModel ? null : menuPopup.menuModel
     }
 
-    function getFilteredModel() {
-        const rawSource = menuPopup._isDirectModel ? menuPopup.menuModel : menuOpener.children;
-        if (!rawSource)
-            return [];
-
+    function _updateFilteredModel() {
         const search = menuPopup.filterText.toLowerCase().trim();
         if (search === "")
-            return rawSource;
+            return;
+
+        const rawSource = menuPopup._isDirectModel ? menuPopup.menuModel : menuOpener.children;
+        if (!rawSource) {
+            menuPopup._currentFilteredModel = [];
+            return;
+        }
 
         const itemsArray = Array.from(rawSource);
-        return itemsArray.filter(item => {
+        menuPopup._currentFilteredModel = itemsArray.filter(item => {
             let textToMatch = "";
             if (item && typeof item === 'object') {
                 if (item.text !== undefined)
@@ -238,11 +242,9 @@ PopupWindow {
                 break;
             case Qt.Key_Return:
             case Qt.Key_Enter:
-                if (menuView.currentIndex >= 0) {
-                    const currentModel = menuPopup.getFilteredModel();
-                    const currentItemData = currentModel[menuView.currentIndex];
-                    if (currentItemData) {
-                        const dataObj = currentItemData.modelData !== undefined ? currentItemData.modelData : currentItemData;
+                if (menuView.currentIndex >= 0 && menuView.currentItem) {
+                    const dataObj = menuView.currentItem.itemData;
+                    if (dataObj) {
                         menuPopup.handleItemTrigger(dataObj);
                     }
                 }
@@ -271,11 +273,11 @@ PopupWindow {
                         menuPopup.focusListView();
                     });
                     item.actionTriggeredRequested.connect(() => {
-                        const currentModel = menuPopup.getFilteredModel();
-                        if (currentModel && currentModel.length > 0) {
-                            const firstItem = currentModel[0];
-                            const dataObj = firstItem.modelData !== undefined ? firstItem.modelData : firstItem;
-                            menuPopup.handleItemTrigger(dataObj);
+                        if (menuView.count > 0) {
+                            const targetItem = menuView.currentItem ? menuView.currentItem : menuView.itemAtIndex(0);
+                            if (targetItem && targetItem.itemData) {
+                                menuPopup.handleItemTrigger(targetItem.itemData);
+                            }
                         }
                     });
                 }
@@ -305,7 +307,7 @@ PopupWindow {
             currentIndex: -1
             onModelChanged: currentIndex = -1
             highlightFollowsCurrentItem: true
-            model: menuPopup.getFilteredModel()
+            model: menuPopup.filterText.trim() === "" ? menuPopup._unfilteredModel : menuPopup._currentFilteredModel
             delegate: MenuItemDelegate {
                 required property var model
                 width: menuView.width
