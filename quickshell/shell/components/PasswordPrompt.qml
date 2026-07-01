@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import "../core"
 
@@ -8,10 +9,10 @@ id: passwordPopup
 
 property var targetNetwork: null
 property string statusState: "input"
-
 property var targetWindow: null
-property real targetX: 0
-property real targetY: 0
+
+property real targetX: targetWindow ? (targetWindow.width / 2) - (implicitWidth / 2) : 0
+property real targetY: targetWindow ? targetWindow.height + 6 : 0
 
 implicitWidth: 440
 implicitHeight: 40
@@ -29,19 +30,16 @@ passwordInput.forceActiveFocus();
 });
 } else {
 connectionWatchdog.stop();
-if (passwordPopup.statusState !== "error") {
 passwordPopup.targetNetwork = null;
-}
 }
 }
 
 function openPrompt(network, parentWin) {
 if (!network || !parentWin)
 return;
+
 passwordPopup.targetNetwork = network;
 passwordPopup.targetWindow = parentWin;
-passwordPopup.targetX = (parentWin.width / 2) - (passwordPopup.implicitWidth / 2);
-passwordPopup.targetY = parentWin.height + 6;
 passwordPopup.visible = true;
 }
 
@@ -49,7 +47,7 @@ Connections {
 target: passwordPopup.targetNetwork
 ignoreUnknownSignals: true
 function onConnectedChanged() {
-if (passwordPopup.targetNetwork && passwordPopup.targetNetwork.connected && passwordPopup.visible) {
+if (passwordPopup.targetNetwork?.connected && passwordPopup.visible) {
 connectionWatchdog.stop();
 passwordPopup.visible = false;
 passwordPopup.targetNetwork = null;
@@ -59,7 +57,7 @@ passwordPopup.targetNetwork = null;
 
 Timer {
 id: connectionWatchdog
-interval: 10000
+interval: 5000
 repeat: false
 onTriggered: {
 if (passwordPopup.targetNetwork && !passwordPopup.targetNetwork.connected) {
@@ -76,30 +74,34 @@ color: ThemeRegistry.menuBackgroundColor
 border.color: passwordPopup.statusState === "error" ? ThemeRegistry.menuErrorColor : ThemeRegistry.menuBorderColor
 border.width: 1
 
-Row {
+RowLayout {
 anchors.fill: parent
 anchors.margins: 8
 spacing: 10
 
 Text {
 id: promptLabel
-anchors.verticalCenter: parent.verticalCenter
+Layout.alignment: Qt.AlignVCenter
 font.family: ThemeRegistry.appliedFontFamily
 font.pixelSize: ThemeRegistry.appliedFontSize
 color: passwordPopup.statusState === "error" ? ThemeRegistry.menuErrorColor : ThemeRegistry.menuTextColor
 text: {
 if (passwordPopup.statusState === "error")
 return "Tente novamente:";
+
+const netName = passwordPopup.targetNetwork?.name || "";
+
 if (passwordPopup.statusState === "connecting")
-return "Conectando a " + (passwordPopup.targetNetwork ? passwordPopup.targetNetwork.name : "") + "...";
-return "Senha para " + (passwordPopup.targetNetwork ? passwordPopup.targetNetwork.name : "") + ":";
+return `Conectando a ${netName}...`;
+
+return `Senha para ${netName}:`;
 }
 }
 
 TextInput {
 id: passwordInput
-anchors.verticalCenter: parent.verticalCenter
-width: parent.width - promptLabel.width - parent.spacing
+Layout.alignment: Qt.AlignVCenter
+Layout.fillWidth: true
 font.family: ThemeRegistry.appliedFontFamily
 font.pixelSize: ThemeRegistry.appliedFontSize
 color: ThemeRegistry.menuTextColor
@@ -107,6 +109,7 @@ echoMode: TextInput.Password
 selectByMouse: true
 clip: true
 visible: passwordPopup.statusState !== "connecting"
+
 Keys.onPressed: event => {
 if (event.key === Qt.Key_Escape) {
 passwordPopup.visible = false;
