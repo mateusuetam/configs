@@ -1,7 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import Quickshell
-import Quickshell.Io
 import "../core"
 
 Item {
@@ -22,12 +21,6 @@ readonly property int labelFontSize: ThemeRegistry.appliedFontSize
 implicitWidth: startRow.implicitWidth
 implicitHeight: startModule.parentWindow ? startModule.parentWindow.barHeight : 30
 
-Process { id: cmdSair; command: ["niri", "msg", "action", "quit", "--skip-confirmation"] }
-Process { id: cmdBloquear; command: ["quickshell", "ipc", "call", "lock_manager", "lock"] }
-Process { id: cmdSuspender; command: ["systemctl", "suspend"] }
-Process { id: cmdReiniciar; command: ["reboot"] }
-Process { id: cmdDesligar; command: ["shutdown", "-h", "0"] }
-
 readonly property var powerMenuModel: [
 {
 type: "action",
@@ -38,28 +31,28 @@ onTrigger: () => startModule.openAppMenu()
 {
 type: "action",
 text: "Sair",
-onTrigger: () => cmdSair.startDetached()
+onTrigger: () => Quickshell.execDetached(["niri", "msg", "action", "quit", "--skip-confirmation"])
 },
 {
 type: "action",
 text: "Bloquear",
-onTrigger: () => cmdBloquear.startDetached()
+onTrigger: () => Quickshell.execDetached(["quickshell", "ipc", "call", "lock_manager", "lock"])
 },
 { type: "separator" },
 {
 type: "action",
 text: "Suspender",
-onTrigger: () => cmdSuspender.startDetached()
+onTrigger: () => Quickshell.execDetached(["systemctl", "suspend"])
 },
 {
 type: "action",
 text: "Reiniciar",
-onTrigger: () => cmdReiniciar.startDetached()
+onTrigger: () => Quickshell.execDetached(["reboot"])
 },
 {
 type: "action",
 text: "Desligar",
-onTrigger: () => cmdDesligar.startDetached()
+onTrigger: () => Quickshell.execDetached(["shutdown", "-h", "0"])
 }
 ]
 
@@ -67,13 +60,18 @@ Instantiator {
 id: appsInstantiator
 model: DesktopEntries.applications
 delegate: QtObject {
+id: appDelegate
 required property var modelData
 readonly property string appName: modelData ? (modelData.name || "") : ""
 readonly property bool appNoDisplay: modelData ? (modelData.noDisplay || false) : false
 
 function launch() {
-if (modelData && typeof modelData.execute === "function")
-modelData.execute();
+if (modelData && modelData.command && modelData.command.length > 0) {
+Quickshell.execDetached({
+command: modelData.command,
+workingDirectory: modelData.workingDirectory || ""
+});
+}
 }
 }
 }
@@ -148,35 +146,11 @@ font.pixelSize: startModule.labelFontSize
 color: startModule.separatorColor
 text: "["
 }
-Text {
-font: prefixText.font
-color: startModule.sLabelColor
-text: "S"
-}
-Text {
-font: prefixText.font
-color: startModule.t1LabelColor
-text: "T"
-}
-Text {
-font: prefixText.font
-color: startModule.aLabelColor
-text: "A"
-}
-Text {
-font: prefixText.font
-color: startModule.rLabelColor
-text: "R"
-}
-Text {
-font: prefixText.font
-color: startModule.t2LabelColor
-text: "T"
-}
-Text {
-font: prefixText.font
-color: prefixText.color
-text: "]"
-}
+Text { font: prefixText.font; color: startModule.sLabelColor; text: "S" }
+Text { font: prefixText.font; color: startModule.t1LabelColor; text: "T" }
+Text { font: prefixText.font; color: startModule.aLabelColor; text: "A" }
+Text { font: prefixText.font; color: startModule.rLabelColor; text: "R" }
+Text { font: prefixText.font; color: startModule.t2LabelColor; text: "T" }
+Text { font: prefixText.font; color: prefixText.color; text: "]" }
 }
 }

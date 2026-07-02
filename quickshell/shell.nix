@@ -31,6 +31,7 @@ Install = { WantedBy = [ "graphical-session.target" ]; };
 Service = {
 ExecStart = "${pkgs.quickshell}/bin/quickshell";
 Restart = "on-failure";
+KillMode = "process";
 };
 };
 })

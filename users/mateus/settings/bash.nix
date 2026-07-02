@@ -15,8 +15,13 @@ rmcache="rm -rf $HOME/.cache/*";
 nrebuild="sudo nixos-rebuild switch --flake . --show-trace";
 nupdate="nix flake update";
 ngc="sudo nix-collect-garbage";
-nclean="sudo nix-collect-garbage -d && sudo nix-store --optimise";
+ngcall="sudo nix-collect-garbage -d";
+nopt="sudo nix-store --optimise";
 qsbin="quickshell -p Repos/configs/quickshell/shell/shell.qml";
+qsstart="systemctl start --user quickshell.service";
+qsstatus="systemctl status --user  quickshell.service";
+qsrestart="systemctl restart --user quickshell.service";
+qsstop="systemctl stop --user quickshell.service";
 };
 
 initExtra = ''

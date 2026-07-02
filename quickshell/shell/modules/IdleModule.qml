@@ -46,7 +46,7 @@ anchors.verticalCenter: parent.verticalCenter
 readonly property var idleState: {
 return idleModule.isActive ? {
 color: idleModule.activatedColor,
-text: "WATCHING"
+text: "ACTIVE"
 } : {
 color: idleModule.deactivatedColor,
 text: "IDLING"
